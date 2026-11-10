@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>過去問ビューア | IT過去問マーカー v2（CBT準拠）</title>
+<meta name="theme-color" content="#1e5fa8">
+<meta
+  http-equiv="Content-Security-Policy"
+  content="
+    default-src 'self';
+    connect-src 'self';
+    img-src 'self' data: blob:;
+    font-src 'self' data:;
+    script-src 'self';
+    style-src 'self' 'unsafe-inline';
+    worker-src 'self';
+    media-src 'none';
+    object-src 'none';
+    frame-src 'none';
+    form-action 'none';
+    base-uri 'none';
+  "
+>
+<link rel="stylesheet" href="vendor/pdfjs/pdf_viewer.css">
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/cbt.css">
+</head>
+<body>
+<div aria-live="polite" role="status" class="sr-only" id="live-region"></div>
+
+<section id="screen-viewer">
+  <header class="viewer-topbar">
+    <a href="index.html" class="icon-btn" aria-label="一覧へ戻る">←<span>一覧</span></a>
+    <span id="doc-title" class="doc-title">読み込み中…</span>
+    <button type="button" id="btn-zoom-out" class="icon-btn" aria-label="縮小">－<span>縮小</span></button>
+    <input type="range" id="zoom-slider" class="zoom-slider" min="30" max="500" value="100" aria-label="表示倍率スライダー">
+    <span id="zoom-level" class="icon-btn" aria-live="polite" style="pointer-events:none;">100%</span>
+    <button type="button" id="btn-zoom-in" class="icon-btn" aria-label="拡大">＋<span>拡大</span></button>
+    <a id="link-other-doc" href="#" class="icon-btn" aria-label="解答例・問題を切り替え"><span id="other-doc-label">解答例</span></a>
+  </header>
+
+  <!-- CBT公式操作説明（32-34, 105-109ページ）に準拠したマーカーツールバー -->
+  <div class="cbt-marker-toolbar" role="toolbar" aria-label="マーカーツール">
+    <button type="button" id="btn-pointer" class="cbt-tool-btn" aria-pressed="true" aria-label="通常ポインター（移動・スクロール）" title="通常ポインター">
+      <span class="cbt-tool-icon" aria-hidden="true">↖</span>
+    </button>
+    <button type="button" id="btn-color-red" class="cbt-tool-btn cbt-color-btn" data-color="red" aria-pressed="false" aria-label="赤マーカー" title="赤マーカー">
+      <span class="cbt-color-dot" style="background:#e53935"></span>
+    </button>
+    <button type="button" id="btn-color-blue" class="cbt-tool-btn cbt-color-btn" data-color="blue" aria-pressed="false" aria-label="青マーカー" title="青マーカー">
+      <span class="cbt-color-dot" style="background:#1e88e5"></span>
+    </button>
+    <button type="button" id="btn-color-yellow" class="cbt-tool-btn cbt-color-btn" data-color="yellow" aria-pressed="false" aria-label="黄マーカー" title="黄マーカー">
+      <span class="cbt-color-dot" style="background:#fdd835"></span>
+    </button>
+    <button type="button" id="btn-eraser" class="cbt-tool-btn" aria-pressed="false" aria-label="消しゴム" title="消しゴム">
+      <span class="cbt-tool-icon" aria-hidden="true">⌫</span>
+    </button>
+    <span class="cbt-toolbar-sep" aria-hidden="true"></span>
+    <label class="cbt-size-label">サイズ
+      <input type="range" id="size-slider" class="cbt-size-slider" min="0.5" max="3" step="0.1" value="1" aria-label="マーカーの太さ">
+    </label>
+    <span id="size-label" class="cbt-size-value">1.0x</span>
+    <button type="button" id="btn-clear-all" class="btn btn-danger cbt-clear-btn">クリア</button>
+  </div>
+
+  <div class="viewer-frame">
+    <div id="viewerContainer" class="pdf-viewport">
+      <div id="viewer" class="pdfViewer"></div>
+    </div>
+  </div>
+
+  <footer class="cbt-bottom-bar">
+    <button type="button" id="btn-open-popup" class="btn">問題（別画面）</button>
+    <p id="status-line" class="status-line">「通常ポインター」モードです。スクロールしてページを読み進められます。</p>
+  </footer>
+</section>
+
+<!-- 「問題（別画面）」: CBT公式の別ウィンドウ表示をフローティングパネルで再現。
+     メイン画面とはPDFViewer・Highlighterとも別インスタンス＝マーカーは同期しない（公式仕様どおり）。 -->
+<div id="popup-window" class="popup-window" hidden>
+  <header id="popup-header" class="popup-header">
+    <span class="popup-title">問題（別画面）</span>
+    <div class="popup-header-actions">
+      <button type="button" id="popup-size-standard" class="popup-size-btn">標準</button>
+      <button type="button" id="popup-size-large" class="popup-size-btn">大</button>
+      <button type="button" id="popup-close" class="popup-close-btn" aria-label="別画面を閉じる">✕</button>
+    </div>
+  </header>
+
+  <div class="viewer-topbar popup-topbar">
+    <button type="button" id="popup-zoom-out" class="icon-btn small" aria-label="縮小">－</button>
+    <input type="range" id="popup-zoom-slider" class="zoom-slider" min="30" max="500" value="100" aria-label="別画面の表示倍率スライダー">
+    <span id="popup-zoom-level" class="icon-btn small" style="pointer-events:none;">100%</span>
+    <button type="button" id="popup-zoom-in" class="icon-btn small" aria-label="拡大">＋</button>
+  </div>
+
+  <div class="cbt-marker-toolbar" role="toolbar" aria-label="別画面のマーカーツール">
+    <button type="button" id="popup-btn-pointer" class="cbt-tool-btn" aria-pressed="true" aria-label="通常ポインター" title="通常ポインター">
+      <span class="cbt-tool-icon" aria-hidden="true">↖</span>
+    </button>
+    <button type="button" id="popup-btn-color-red" class="cbt-tool-btn cbt-color-btn" data-color="red" aria-pressed="false" aria-label="赤マーカー" title="赤マーカー">
+      <span class="cbt-color-dot" style="background:#e53935"></span>
+    </button>
+    <button type="button" id="popup-btn-color-blue" class="cbt-tool-btn cbt-color-btn" data-color="blue" aria-pressed="false" aria-label="青マーカー" title="青マーカー">
+      <span class="cbt-color-dot" style="background:#1e88e5"></span>
+    </button>
+    <button type="button" id="popup-btn-color-yellow" class="cbt-tool-btn cbt-color-btn" data-color="yellow" aria-pressed="false" aria-label="黄マーカー" title="黄マーカー">
+      <span class="cbt-color-dot" style="background:#fdd835"></span>
+    </button>
+    <button type="button" id="popup-btn-eraser" class="cbt-tool-btn" aria-pressed="false" aria-label="消しゴム" title="消しゴム">
+      <span class="cbt-tool-icon" aria-hidden="true">⌫</span>
+    </button>
+    <span class="cbt-toolbar-sep" aria-hidden="true"></span>
+    <label class="cbt-size-label">サイズ
+      <input type="range" id="popup-size-slider" class="cbt-size-slider" min="0.5" max="3" step="0.1" value="1" aria-label="別画面のマーカーの太さ">
+    </label>
+    <span id="popup-size-label" class="cbt-size-value">1.0x</span>
+    <button type="button" id="popup-btn-clear-all" class="btn btn-danger cbt-clear-btn">クリア</button>
+  </div>
+
+  <div class="viewer-frame popup-viewer-frame">
+    <div id="popup-viewerContainer" class="pdf-viewport">
+      <div id="popup-viewer" class="pdfViewer"></div>
+    </div>
+  </div>
+
+  <p id="popup-status-line" class="status-line">この別画面のマーカーは、メイン画面とは独立して保存されます。</p>
+  <div id="popup-resize-handle" class="popup-resize-handle" aria-hidden="true"></div>
+</div>
+
+<script type="module" src="js/viewer-app.js"></script>
+</body>
+</html>

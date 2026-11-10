@@ -1,0 +1,16 @@
+{
+  "name": "it-strategist-cbt-viewer-v2",
+  "version": "2.0.0",
+  "private": true,
+  "description": "IT過去問マーカー v2 - IPA公式CBT試験アプリの操作画面に準拠したマーカー・別画面機能を持つ過去問ビューア（v1: ipa-kakomon-marker とは完全に別フォルダ・別ストレージ）",
+  "type": "module",
+  "scripts": {
+    "serve": "python3 -m http.server 8001",
+    "vendor:copy": "node scripts/copy-pdfjs-vendor.mjs"
+  },
+  "devDependencies": {
+    "jsdom": "^30.0.1",
+    "pdfjs-dist": "6.2.108",
+    "playwright-core": "^1.62.1"
+  }
+}

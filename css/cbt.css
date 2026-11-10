@@ -1,0 +1,175 @@
+/* cbt.css - v2で追加: CBT準拠マーカーツールバー／ズームスライダー／「問題（別画面）」フローティングパネル */
+
+/* ---------- ズームスライダー ---------- */
+.zoom-slider {
+  width: 90px;
+  flex: 0 0 auto;
+  accent-color: var(--color-primary);
+}
+
+/* ---------- CBT準拠マーカーツールバー ----------
+   並び順は公式CBT操作説明PDF 32-34, 105-109ページに準拠:
+   通常ポインター / 赤 / 青 / 黄 / 消しゴム / サイズ / クリア */
+.cbt-marker-toolbar {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 10px;
+  background: var(--color-surface);
+  border-bottom: 1px solid var(--color-border);
+  overflow-x: auto;
+}
+
+.cbt-tool-btn {
+  min-width: var(--min-tap);
+  min-height: var(--min-tap);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  flex: 0 0 auto;
+  padding: 4px;
+}
+.cbt-tool-icon { font-size: 1.1rem; line-height: 1; }
+.cbt-tool-btn[aria-pressed="true"] {
+  background: color-mix(in srgb, var(--color-primary) 22%, var(--color-surface));
+  border-color: var(--color-primary);
+  box-shadow: inset 0 0 0 2px var(--color-primary);
+}
+
+.cbt-color-dot {
+  display: block;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 1px solid rgba(0, 0, 0, 0.25);
+}
+
+.cbt-toolbar-sep {
+  width: 1px;
+  align-self: stretch;
+  background: var(--color-border);
+  margin: 0 6px;
+  flex: 0 0 auto;
+}
+
+.cbt-size-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.78rem;
+  color: var(--color-muted);
+  flex: 0 0 auto;
+  white-space: nowrap;
+}
+.cbt-size-slider { width: 80px; accent-color: var(--color-primary); }
+.cbt-size-value {
+  font-size: 0.78rem;
+  color: var(--color-muted);
+  min-width: 2.6em;
+  flex: 0 0 auto;
+}
+
+.cbt-clear-btn {
+  margin-left: auto;
+  min-height: 36px;
+  padding: 6px 14px;
+  flex: 0 0 auto;
+}
+
+/* ---------- 下部バー（問題「別画面」ボタン） ---------- */
+.cbt-bottom-bar {
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  background: var(--color-surface);
+  border-top: 1px solid var(--color-border);
+}
+.cbt-bottom-bar > .btn {
+  margin: 6px 10px 0;
+  align-self: flex-start;
+}
+.cbt-bottom-bar .status-line {
+  border-top: none;
+}
+
+/* ---------- 「問題（別画面）」フローティングパネル ----------
+   実際のウィンドウではなく、画面内でドラッグ・リサイズできるパネルとして実装
+   （ブラウザのポップアップウィンドウはPDF.js等の状態共有が困難なための代替。
+   公式PDFの説明どおり、ドラッグでの移動・外枠でのリサイズ・大/標準サイズ切替に対応）。 */
+.popup-window {
+  position: fixed;
+  top: 8vh;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(640px, 92vw);
+  height: 70vh;
+  min-width: 320px;
+  min-height: 320px;
+  background: var(--color-surface);
+  border: 2px solid var(--color-primary);
+  border-radius: 12px;
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.35);
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.popup-header {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  background: var(--color-primary);
+  color: #fff;
+  cursor: grab;
+  touch-action: none;
+  user-select: none;
+}
+.popup-header:active { cursor: grabbing; }
+.popup-title { font-weight: 700; font-size: 0.9rem; margin-right: auto; }
+.popup-header-actions { display: flex; gap: 6px; }
+.popup-size-btn, .popup-close-btn {
+  min-height: 32px;
+  padding: 4px 10px;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  background: rgba(255, 255, 255, 0.12);
+  color: #fff;
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+.popup-close-btn { padding: 4px 10px; }
+
+.popup-topbar {
+  justify-content: center;
+}
+
+.popup-viewer-frame {
+  flex: 1 1 auto;
+}
+
+.popup-resize-handle {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: 22px;
+  height: 22px;
+  cursor: nwse-resize;
+  touch-action: none;
+  background:
+    linear-gradient(135deg, transparent 0 55%, var(--color-border) 55% 60%, transparent 60% 70%, var(--color-border) 70% 75%, transparent 75%);
+}
+
+@media (max-width: 480px) {
+  .popup-window {
+    width: 96vw;
+    left: 2vw;
+    transform: none;
+  }
+}

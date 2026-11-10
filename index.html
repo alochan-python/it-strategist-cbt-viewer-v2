@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>IT過去問マーカー | ITストラテジスト試験 午後I</title>
+<meta name="description" content="ITストラテジスト試験 午後I（新CBT制度の科目B-1相当）の過去問PDFに蛍光マーカーを引きながら読み込める学習アプリ。">
+<meta name="theme-color" content="#1e5fa8">
+<meta
+  http-equiv="Content-Security-Policy"
+  content="
+    default-src 'self';
+    connect-src 'self';
+    img-src 'self' data: blob:;
+    font-src 'self' data:;
+    script-src 'self';
+    style-src 'self' 'unsafe-inline';
+    worker-src 'self';
+    media-src 'none';
+    object-src 'none';
+    frame-src 'none';
+    form-action 'none';
+    base-uri 'none';
+  "
+>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<main class="home-main">
+  <header class="home-header">
+    <h1>IT過去問マーカー</h1>
+    <p class="subtitle">ITストラテジスト試験 午後I（新CBT制度では「科目B-1」に相当）の過去問を読み込み、蛍光マーカーを引きながら学習できます。</p>
+  </header>
+
+  <div class="notice-box">
+    <p>問題文・解答例はIPA（独立行政法人情報処理推進機構）が公表している過去問PDFをそのまま使用しています。教育目的での利用はIPAの利用条件で認められています。</p>
+    <p>マーカーの位置はこの端末のブラウザ内（localStorage）にのみ保存され、外部へは送信されません。</p>
+    <p>実際のCBT試験画面では、問題文へ直接デジタルでマーカーを引く機能は無く、会場で配布される手元のメモボード（水性ペン）にメモを取る方式です。本アプリは学習・読解練習用のツールです。</p>
+  </div>
+
+  <ul id="session-list" class="session-list"></ul>
+
+  <footer class="page-footer">
+    <p>出典・利用条件・データ取得日の詳細は <a href="SOURCES.md">SOURCES.md</a> をご覧ください。著作権はIPAに帰属します。</p>
+  </footer>
+</main>
+<script type="module" src="js/app.js"></script>
+</body>
+</html>
