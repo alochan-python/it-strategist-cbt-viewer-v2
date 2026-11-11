@@ -143,7 +143,9 @@ export class Highlighter {
     }
     if (!this.activeStroke || !this.activePageDiv) return;
     const p = this._pagePoint(this.activePageDiv, event.clientX, event.clientY);
-    this.activeStroke.points.push(p);
+    // マーカーはまっすぐ横（水平方向）にしか引けないよう、始点のY座標に固定する。
+    const lockedY = this.activeStroke.points[0].y;
+    this.activeStroke.points.push({ x: p.x, y: lockedY });
     this._drawLive();
   }
 

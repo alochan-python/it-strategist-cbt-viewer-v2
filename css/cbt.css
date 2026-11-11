@@ -119,6 +119,36 @@
   overflow: hidden;
 }
 
+/* 「半透明」チェックON時: 公式CBTの「メモ」ウィンドウと同様に、
+   背景（PDFの白地部分）だけを透かして後ろのメイン画面が見えるようにしつつ、
+   問題文・マーカーなど濃い部分は見えたままにする。
+   opacityで画面全体を薄くすると文字まで読みにくくなるため、
+   背景を透明化したうえで mix-blend-mode:multiply を使う
+   （白は背景を透過させ、黒い文字はそのまま黒く残る）。
+   ヘッダー・ツールバー・下部ステータス行は独自の背景色を持つため、
+   この透過の影響を受けず操作性を維持する。 */
+.popup-window.translucent {
+  background: transparent;
+}
+.popup-window.translucent .viewer-frame,
+.popup-window.translucent .pdf-viewport {
+  background: transparent;
+}
+.popup-window.translucent .pdfViewer {
+  mix-blend-mode: multiply;
+}
+
+.popup-translucent-label {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.78rem;
+  color: #fff;
+  white-space: nowrap;
+  flex: 0 0 auto;
+}
+.popup-translucent-label input { width: 16px; height: 16px; }
+
 .popup-header {
   flex: 0 0 auto;
   display: flex;

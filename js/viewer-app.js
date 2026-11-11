@@ -41,6 +41,7 @@ const els = {
   btnOpenPopup: $('btn-open-popup'),
   popupWindow: $('popup-window'),
   popupHeader: $('popup-header'),
+  popupTranslucentToggle: $('popup-translucent-toggle'),
   popupClose: $('popup-close'),
   popupSizeStandard: $('popup-size-standard'),
   popupSizeLarge: $('popup-size-large'),
@@ -93,7 +94,7 @@ function initPopupDragAndResize() {
   // ドラッグ移動（ヘッダーをつかむ。ボタン操作は除外）
   let dragState = null;
   els.popupHeader.addEventListener('pointerdown', (e) => {
-    if (e.target.closest('button')) return;
+    if (e.target.closest('button, label, input')) return;
     switchToExplicitPosition();
     const rect = win.getBoundingClientRect();
     dragState = { startX: e.clientX, startY: e.clientY, startLeft: rect.left, startTop: rect.top };
@@ -148,6 +149,12 @@ function initPopupDragAndResize() {
     win.style.transform = 'translateX(-50%)';
     win.style.width = '94vw';
     win.style.height = '92vh';
+  });
+
+  // 「半透明」チェック: 公式CBTの「メモ」ウィンドウと同様に、別画面だけを透かして
+  // 後ろのメイン画面が見えるようにする（メイン画面側には適用しない）。
+  els.popupTranslucentToggle.addEventListener('change', (e) => {
+    win.classList.toggle('translucent', e.target.checked);
   });
 }
 
