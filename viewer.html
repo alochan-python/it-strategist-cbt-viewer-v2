@@ -27,6 +27,21 @@
 <link rel="stylesheet" href="css/cbt.css">
 </head>
 <body>
+<!-- 「半透明」表示用フィルタ: 問題（別画面）のPDFページ画像のうち、明るい（白い）部分だけを
+     透明にし、濃い（文字・マーカー）部分はそのまま見えるように変換する。
+     mix-blend-modeは別画面(position:fixed)が独自のスタッキングコンテキストを作るため
+     背後のメイン画面まで届かず、見た目が透けなかった。本物のアルファ透過（filter）を
+     使うことで、スタッキングコンテキストに関係なく背後が見えるようにする。 -->
+<svg aria-hidden="true" style="position:absolute; width:0; height:0; overflow:hidden;">
+  <filter id="cbt-translucent-filter" color-interpolation-filters="sRGB">
+    <feColorMatrix type="matrix" values="
+      1 0 0 0 0
+      0 1 0 0 0
+      0 0 1 0 0
+      -0.2125 -0.7154 -0.0721 0 1
+    "/>
+  </filter>
+</svg>
 <div aria-live="polite" role="status" class="sr-only" id="live-region"></div>
 
 <section id="screen-viewer">

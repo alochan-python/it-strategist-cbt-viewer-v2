@@ -122,9 +122,12 @@
 /* 「半透明」チェックON時: 公式CBTの「メモ」ウィンドウと同様に、
    背景（PDFの白地部分）だけを透かして後ろのメイン画面が見えるようにしつつ、
    問題文・マーカーなど濃い部分は見えたままにする。
-   opacityで画面全体を薄くすると文字まで読みにくくなるため、
-   背景を透明化したうえで mix-blend-mode:multiply を使う
-   （白は背景を透過させ、黒い文字はそのまま黒く残る）。
+   最初はmix-blend-mode:multiplyで試したが、別画面(position:fixed)は
+   それ自体が独立したスタッキングコンテキストを作るため、背後のメイン画面との
+   ブレンドが行われず透けなかった（別画面内部でしか混ざらない）。
+   そこで本物のアルファ透過（SVGフィルタで明るい画素ほど透明にする）を使う。
+   アルファ透過はスタッキングコンテキストに関係なく常に背後が見えるため、
+   不透明なページ余白（background-color）も含めて確実に透ける。
    ヘッダー・ツールバー・下部ステータス行は独自の背景色を持つため、
    この透過の影響を受けず操作性を維持する。 */
 .popup-window.translucent {
@@ -134,8 +137,11 @@
 .popup-window.translucent .pdf-viewport {
   background: transparent;
 }
-.popup-window.translucent .pdfViewer {
-  mix-blend-mode: multiply;
+.popup-window.translucent .pdfViewer .page {
+  background: transparent;
+}
+.popup-window.translucent .pdfViewer .page .canvasWrapper canvas {
+  filter: url(#cbt-translucent-filter);
 }
 
 .popup-translucent-label {
