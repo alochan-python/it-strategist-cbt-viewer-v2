@@ -38,3 +38,32 @@ export function clearHighlights(docKey) {
   if (!isStorageAvailable()) return;
   localStorage.removeItem(PREFIX + docKey);
 }
+
+// ---------- 「メモ」機能用（公式CBT操作説明PDF 110-136ページ）----------
+// 公式CBTのメモは試験ごとにリセットされるが、本アプリは学習用途のため
+// 文書（セッション:qs|ans）ごとにlocalStorageへ保存し、再読み込みしても残るようにしている。
+const MEMO_PREFIX = 'it-strategist-cbt-viewer-v2:memo:';
+
+/** @returns {string} 保存されているメモのHTML（未保存なら空文字） */
+export function loadMemo(docKey) {
+  if (!isStorageAvailable()) return '';
+  try {
+    return localStorage.getItem(MEMO_PREFIX + docKey) || '';
+  } catch {
+    return '';
+  }
+}
+
+export function saveMemo(docKey, html) {
+  if (!isStorageAvailable()) return;
+  try {
+    localStorage.setItem(MEMO_PREFIX + docKey, html);
+  } catch {
+    /* 保存容量オーバー等は無視し、メモ機能自体は継続させる */
+  }
+}
+
+export function clearMemo(docKey) {
+  if (!isStorageAvailable()) return;
+  localStorage.removeItem(MEMO_PREFIX + docKey);
+}

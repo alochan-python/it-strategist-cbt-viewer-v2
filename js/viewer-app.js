@@ -2,6 +2,7 @@
 import * as pdfjsLib from '../vendor/pdfjs/pdf.min.mjs';
 import { findSession } from './exam-data.js';
 import { PdfPanel } from './pdf-panel.js';
+import { MemoPanel } from './memo.js';
 
 pdfjsLib.GlobalWorkerOptions.workerSrc = 'vendor/pdfjs/pdf.worker.min.mjs';
 
@@ -61,6 +62,33 @@ const els = {
   popupSizeLabel: $('popup-size-label'),
   popupClearBtn: $('popup-btn-clear-all'),
   popupStatusLine: $('popup-status-line'),
+
+  // 「メモ」
+  btnOpenMemo: $('btn-open-memo'),
+  memoWindow: $('memo-window'),
+  memoHeader: $('memo-header'),
+  memoTranslucentToggle: $('memo-translucent-toggle'),
+  memoImeRomaji: $('memo-ime-romaji'),
+  memoImeKana: $('memo-ime-kana'),
+  memoClose: $('memo-close'),
+  memoCloseBottom: $('memo-close-bottom'),
+  memoSearchToggle: $('memo-search-toggle'),
+  memoSearchBar: $('memo-search-bar'),
+  memoSearchInput: $('memo-search-input'),
+  memoSearchCount: $('memo-search-count'),
+  memoSearchPrev: $('memo-search-prev'),
+  memoSearchNext: $('memo-search-next'),
+  memoSearchClose: $('memo-search-close'),
+  memoColorRed: $('memo-color-red'),
+  memoColorBlue: $('memo-color-blue'),
+  memoColorYellow: $('memo-color-yellow'),
+  memoColorEraser: $('memo-color-eraser'),
+  memoCut: $('memo-cut'),
+  memoCopy: $('memo-copy'),
+  memoPaste: $('memo-paste'),
+  memoContent: $('memo-content'),
+  memoCharCount: $('memo-char-count'),
+  memoResizeHandle: $('memo-resize-handle'),
 };
 
 function announce(message) {
@@ -240,6 +268,48 @@ async function init() {
   els.popupClose.addEventListener('click', () => {
     els.popupWindow.hidden = true;
     announce('別画面を閉じました。');
+  });
+
+  // ---------- 「メモ」(公式CBT操作説明PDF 110-136ページ) ----------
+  const memoPanel = new MemoPanel({
+    win: els.memoWindow,
+    header: els.memoHeader,
+    translucentToggle: els.memoTranslucentToggle,
+    closeBtn: els.memoClose,
+    closeBtnBottom: els.memoCloseBottom,
+    searchToggleBtn: els.memoSearchToggle,
+    searchBar: els.memoSearchBar,
+    searchInput: els.memoSearchInput,
+    searchCount: els.memoSearchCount,
+    searchPrev: els.memoSearchPrev,
+    searchNext: els.memoSearchNext,
+    searchClose: els.memoSearchClose,
+    colorButtons: {
+      red: els.memoColorRed,
+      blue: els.memoColorBlue,
+      yellow: els.memoColorYellow,
+      eraser: els.memoColorEraser,
+    },
+    cutBtn: els.memoCut,
+    copyBtn: els.memoCopy,
+    pasteBtn: els.memoPaste,
+    content: els.memoContent,
+    charCount: els.memoCharCount,
+    resizeHandle: els.memoResizeHandle,
+    docKey: baseDocKey,
+    announce,
+  });
+  els.btnOpenMemo.addEventListener('click', () => memoPanel.open());
+
+  // 「ローマ字」「かな」: 公式CBTはOSのIME方式切替ボタンだが、Webページからは
+  // IME方式を制御できないため見た目（押下状態の切替）のみ再現する。
+  els.memoImeRomaji.addEventListener('click', () => {
+    els.memoImeRomaji.setAttribute('aria-pressed', 'true');
+    els.memoImeKana.setAttribute('aria-pressed', 'false');
+  });
+  els.memoImeKana.addEventListener('click', () => {
+    els.memoImeKana.setAttribute('aria-pressed', 'true');
+    els.memoImeRomaji.setAttribute('aria-pressed', 'false');
   });
 }
 

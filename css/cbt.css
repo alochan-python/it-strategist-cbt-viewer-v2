@@ -181,6 +181,7 @@
   font-weight: 600;
 }
 .popup-close-btn { padding: 4px 10px; }
+.popup-size-btn[aria-pressed="true"] { background: rgba(255, 255, 255, 0.35); }
 
 .popup-topbar {
   justify-content: center;
@@ -207,5 +208,117 @@
     width: 96vw;
     left: 2vw;
     transform: none;
+  }
+}
+
+/* ---------- 「メモ」パネル（公式CBT操作説明PDF 110-136ページ） ----------
+   popup-window(「問題（別画面）」)と同じ土台（フローティング・ドラッグ・リサイズ・半透明）を再利用し、
+   中身だけをメモ用（自由記述・検索・文字マーカー・カット/コピー/ペースト）に差し替える。 */
+#memo-window {
+  top: 14vh;
+  left: 50%;
+  width: min(480px, 90vw);
+  height: 60vh;
+}
+
+.memo-toolbar {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px;
+  padding: 6px 10px;
+  background: var(--color-surface);
+  border-bottom: 1px solid var(--color-border);
+}
+.memo-tool-btn {
+  min-height: 36px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 8px;
+  border-radius: 8px;
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  font-size: 0.85rem;
+  flex: 0 0 auto;
+  white-space: nowrap;
+}
+.memo-color-btn { padding: 4px; }
+.memo-color-dot-eraser {
+  background: repeating-conic-gradient(#fff 0% 25%, #ddd 0% 50%) 0 0 / 8px 8px;
+  border: 1px solid rgba(0, 0, 0, 0.35);
+}
+
+.memo-search-bar {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  background: var(--color-surface);
+  border-bottom: 1px solid var(--color-border);
+}
+.memo-search-input {
+  flex: 1 1 auto;
+  min-height: 32px;
+  padding: 4px 8px;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+}
+.memo-search-count {
+  font-size: 0.78rem;
+  color: var(--color-muted);
+  min-width: 3.5em;
+  flex: 0 0 auto;
+}
+
+.memo-content {
+  flex: 1 1 auto;
+  overflow: auto;
+  padding: 12px;
+  background: var(--color-surface);
+  outline: none;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+.memo-content mark.memo-search-hit {
+  background: #fff59d;
+}
+.memo-content mark.memo-search-hit.active {
+  background: #ffb300;
+  outline: 2px solid #e65100;
+}
+
+.memo-footer {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 8px 12px;
+  background: var(--color-surface);
+  border-top: 1px solid var(--color-border);
+}
+.memo-char-count { font-size: 0.78rem; color: var(--color-muted); }
+
+/* 「半透明」: メモの文字は通常のDOMテキストなので、背景を透過させるだけで
+   文字自体はそのままはっきり見える（問題（別画面）のスキャン画像とは違い、
+   フィルタでの輝度→透過変換は不要）。 */
+.memo-window.translucent {
+  background: transparent;
+}
+.memo-window.translucent .memo-toolbar,
+.memo-window.translucent .memo-search-bar,
+.memo-window.translucent .memo-content,
+.memo-window.translucent .memo-footer {
+  background: rgba(255, 255, 255, 0.28);
+}
+@media (prefers-color-scheme: dark) {
+  .memo-window.translucent .memo-toolbar,
+  .memo-window.translucent .memo-search-bar,
+  .memo-window.translucent .memo-content,
+  .memo-window.translucent .memo-footer {
+    background: rgba(35, 36, 39, 0.35);
   }
 }

@@ -53,6 +53,7 @@
     <span id="zoom-level" class="icon-btn" aria-live="polite" style="pointer-events:none;">100%</span>
     <button type="button" id="btn-zoom-in" class="icon-btn" aria-label="拡大">＋<span>拡大</span></button>
     <a id="link-other-doc" href="#" class="icon-btn" aria-label="解答例・問題を切り替え"><span id="other-doc-label">解答例</span></a>
+    <button type="button" id="btn-open-memo" class="icon-btn" aria-label="メモを開く"><span>メモ</span></button>
   </header>
 
   <!-- CBT公式操作説明（32-34, 105-109ページ）に準拠したマーカーツールバー -->
@@ -147,6 +148,52 @@
 
   <p id="popup-status-line" class="status-line">この別画面のマーカーは、メイン画面とは独立して保存されます。</p>
   <div id="popup-resize-handle" class="popup-resize-handle" aria-hidden="true"></div>
+</div>
+
+<!-- 「メモ」: CBT公式操作説明(110-136ページ)の自由記述メモを再現。
+     試験全体で1つ（公式仕様どおり「問題（別画面）」とは別の独立したパネル）。 -->
+<div id="memo-window" class="memo-window popup-window" hidden>
+  <header id="memo-header" class="popup-header">
+    <label class="popup-translucent-label">
+      <input type="checkbox" id="memo-translucent-toggle">
+      半透明
+    </label>
+    <span class="popup-title">メモ</span>
+    <div class="popup-header-actions">
+      <button type="button" id="memo-ime-romaji" class="popup-size-btn" aria-pressed="true">ローマ字</button>
+      <button type="button" id="memo-ime-kana" class="popup-size-btn" aria-pressed="false">かな</button>
+      <button type="button" id="memo-close" class="popup-close-btn" aria-label="メモを閉じる">✕</button>
+    </div>
+  </header>
+
+  <div class="memo-toolbar" role="toolbar" aria-label="メモツール">
+    <button type="button" id="memo-search-toggle" class="memo-tool-btn" aria-label="検索">🔍 検索</button>
+    <span class="cbt-toolbar-sep" aria-hidden="true"></span>
+    <button type="button" id="memo-color-red" class="memo-tool-btn memo-color-btn" aria-label="赤マーカー"><span class="cbt-color-dot" style="background:#e53935"></span></button>
+    <button type="button" id="memo-color-blue" class="memo-tool-btn memo-color-btn" aria-label="青マーカー"><span class="cbt-color-dot" style="background:#1e88e5"></span></button>
+    <button type="button" id="memo-color-yellow" class="memo-tool-btn memo-color-btn" aria-label="黄マーカー"><span class="cbt-color-dot" style="background:#fdd835"></span></button>
+    <button type="button" id="memo-color-eraser" class="memo-tool-btn memo-color-btn" aria-label="マーカー消去"><span class="cbt-color-dot memo-color-dot-eraser"></span></button>
+    <span class="cbt-toolbar-sep" aria-hidden="true"></span>
+    <button type="button" id="memo-cut" class="memo-tool-btn" aria-label="カット">✂ カット</button>
+    <button type="button" id="memo-copy" class="memo-tool-btn" aria-label="コピー">⧉ コピー</button>
+    <button type="button" id="memo-paste" class="memo-tool-btn" aria-label="ペースト">📋 ペースト</button>
+  </div>
+
+  <div id="memo-search-bar" class="memo-search-bar" hidden>
+    <input type="text" id="memo-search-input" class="memo-search-input" placeholder="検索" aria-label="メモ内を検索">
+    <span id="memo-search-count" class="memo-search-count"></span>
+    <button type="button" id="memo-search-prev" class="memo-tool-btn" aria-label="前の一致箇所">▲</button>
+    <button type="button" id="memo-search-next" class="memo-tool-btn" aria-label="次の一致箇所">▼</button>
+    <button type="button" id="memo-search-close" class="memo-tool-btn" aria-label="検索を閉じる">✕</button>
+  </div>
+
+  <div id="memo-content" class="memo-content" contenteditable="true" role="textbox" aria-multiline="true" aria-label="メモ本文"></div>
+
+  <div class="memo-footer">
+    <span id="memo-char-count" class="memo-char-count">0 / 10,000 文字</span>
+    <button type="button" id="memo-close-bottom" class="btn">閉じる</button>
+  </div>
+  <div id="memo-resize-handle" class="popup-resize-handle" aria-hidden="true"></div>
 </div>
 
 <script type="module" src="js/viewer-app.js"></script>
